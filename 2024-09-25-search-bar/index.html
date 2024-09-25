@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searchbar</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+        body {
+            background: black;
+        }
+        #wrap {
+            width: 230px;
+            height: 38px;
+            border: 1px solid rgb(105, 105, 130);
+            background-color: rgb(32, 32, 41);
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        #wrap > input {
+            width: calc(100% - 50px);
+            height: 100%;
+            border: none;
+            outline: none;
+            box-sizing: border-box;
+            background: transparent;
+            color: rgb(200, 200, 230);
+            font-size: 16px;
+            font-family: "Outfit", sans-serif;
+            letter-spacing: 2px;
+            padding: 0 12px;
+        }
+        #wrap > input::placeholder {
+            color: rgb(105, 105, 130);
+            opacity: 1;
+        }
+        #wrap > #search-btn {
+            width: 50px;
+            height: 100%;
+            background: url("./search-icon-200-200-230.svg") no-repeat center center;
+            background-color: rgb(32, 32, 41);
+            background-size: 20px;
+            border-left: 1px solid rgb(105, 105, 130);
+            transition: all ease 0.4s;
+        }
+        #wrap > #search-btn:hover {
+            background-color: rgb(105, 105, 130);
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <input type="text" name="search" placeholder="Search">
+        <div id="search-btn"></div>
+    </div>
+    <script>
+
+    </script>
+</body>
+</html>
