@@ -20,7 +20,7 @@
             cursor: pointer;
             outline: inherit;
         }
-        #wrap {
+        .search-wrap {
             width: 230px;
             height: 38px;
             border: 1px solid rgb(105, 105, 130);
@@ -30,7 +30,7 @@
             overflow: hidden;
             box-sizing: border-box;
         }
-        #wrap > input {
+        .search-wrap > input {
             width: calc(100% - 50px);
             height: 100%;
             border: none;
@@ -54,11 +54,11 @@
         input:-webkit-autofill{
             -webkit-text-fill-color: rgb(200, 200, 230) !important;
         }
-        #wrap > input::placeholder {
+        .search-wrap > input::placeholder {
             color: rgb(105, 105, 130);
             opacity: 1;
         }
-        #wrap > #search-btn {
+        .search-wrap > .search-btn {
             width: 50px;
             height: 100%;
             border-left: 1px solid rgb(105, 105, 130);
@@ -67,7 +67,7 @@
             background-color: rgb(32, 32, 41);
             transition: all ease 0.4s;
         }
-        #wrap > #search-btn:hover {
+        .search-wrap > .search-btn:hover {
             background: url("./search-icon-white.svg") no-repeat center center;
             background-size: 20px;
             background-color: rgb(105, 105, 130);
@@ -75,17 +75,12 @@
     </style>
 </head>
 <body>
-    <form id="wrap" method="get" action="">
+    <form class="search-wrap" method="get" action="">
         <input type="text" name="search" placeholder="Search">
-        <button id="search-btn"></button>
+        <button class="search-btn"></button>
     </form>
     <script>
-        document.querySelector("#wrap > input").addEventListener('focus', (event) => {
-            event.target.parentElement.style.borderColor = "rgb(200, 200, 230)";
-        });
-        document.querySelector("#wrap > input").addEventListener('blur', (event) => {
-            event.target.parentElement.style.borderColor = "rgb(105, 105, 130)";
-        });
+        
     </script>
 </body>
 </html>

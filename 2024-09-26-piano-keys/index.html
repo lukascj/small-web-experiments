@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano Keys</title>
+    <style>
+        .piano-wrap {
+            --w: 40px;
+            position: relative;
+            display: flex;
+            width: max-content;
+            height: max-content;
+            column-gap: calc(var(--w)*0.075);
+        }
+        .piano-wrap > .octave {
+            width: max-content;
+            height: max-content;
+            position: relative;
+        }
+        .piano-wrap .white-keys {
+            display: flex;
+            column-gap: calc(var(--w)*0.075);
+        } 
+        .piano-wrap .black-keys {
+            display: flex;
+            column-gap: calc(var(--w)*0.475);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .piano-wrap .key {
+            box-sizing: border-box;
+            border-radius: 0 0 calc(var(--w)*0.2) calc(var(--w)*0.2);
+            transition: all ease 0.1s;
+        }
+        .piano-wrap .white-keys .key {
+            width: var(--w);
+            height: calc(var(--w)*4);
+            background-color: rgb(230, 237, 240);
+            border: calc(var(--w)*0.05) solid rgb(182, 185, 190);
+        }
+        .piano-wrap .black-keys .key {
+            width: calc(var(--w)*0.6);
+            height: calc(var(--w)*2.75);
+            background-color: rgb(60, 60, 61);
+            border: calc(var(--w)*0.05) solid rgb(33, 33, 34);
+        }
+        .piano-wrap .black-keys .key:first-child {
+            margin-left: calc( var(--w) * ((1 - 0.3) + (0.075 * 0.5)) );
+        }
+        .piano-wrap .black-keys .key[note="fs"], .piano-wrap .black-keys .key[note="cs"]:not(:first-child) {
+            margin-left: calc(var(--w)*1.075);
+        }
+        .piano-wrap.hoverable .white-keys .key:hover {
+            background-color: rgb(135, 130, 195);
+            border-color: rgb(90, 80, 125);
+        }
+        .piano-wrap.hoverable .black-keys .key:hover {
+            background-color: rgb(65, 60, 100);
+            border-color: rgb(40, 35, 55);
+        }
+    </style>
+</head>
+<body>
+    <div class="piano-wrap hoverable" octaves="3-4">
+        <!--<div class="octave" octave="c4">
+            <div class="white-keys">
+                <div class="key" note="c"><audio src="./notes/c4/c4.mp4"></audio></div>    
+                <div class="key" note="d"><audio src="./notes/c4/d4.mp4"></audio></div>
+                <div class="key" note="e"><audio src="./notes/c4/e4.mp4"></audio></div>
+                <div class="key" note="f"><audio src="./notes/c4/f4.mp4"></audio></div>
+                <div class="key" note="g"><audio src="./notes/c4/g4.mp4"></audio></div>
+                <div class="key" note="a"><audio src="./notes/c4/a4.mp4"></audio></div>
+                <div class="key" note="b"><audio src="./notes/c4/b4.mp4"></audio></div>
+            </div>
+            <div class="black-keys">
+                <div class="key" note="cs"></div>
+                <div class="key" note="ds"></div>
+                <div class="key" note="fs"></div>
+                <div class="key" note="gs"></div>
+                <div class="key" note="as"></div>
+            </div>
+        </div>-->
+    </div>
+    <script>
+        const whiteKeys = ["c", "d", "e", "f", "g", "a", "b"];
+        const blackKeys = ["cs", "ds", "fs", "gs", "as"];
+
+        document.querySelectorAll('.piano-wrap').forEach((wrapElem) => {
+            const octLims = wrapElem.getAttribute('octaves').split('-').map((num) => parseInt(num));
+            let html = "";
+            for(let octave = octLims[0]; octave <= octLims[1]; octave++) {
+                html += `<div class="octave" octave="c${octave}">`;
+                html += `<div class="white-keys">`;
+                whiteKeys.forEach((key) => {
+                    html += `<div class="key" note="${key}">`;
+                    html += `<audio src="./notes/c${octave}/${key}${octave}.mp3"></audio>`;
+                    html += `</div>`;
+                });
+                html += `</div>`;
+                html += `<div class="black-keys">`;
+                blackKeys.forEach((key) => {
+                    html += `<div class="key" note="${key}">`;
+                    html += `<audio src="./notes/c${octave}/${key}${octave}.mp3"></audio>`;
+                    html += `</div>`;
+                });
+                html += `</div>`;
+                html += `</div>`;
+            }
+            wrapElem.innerHTML = html;
+        });
+        setTimeout(() => {
+            document.querySelectorAll('.piano-wrap .key').forEach((elem) => {
+                elem.addEventListener('click', (event) => {
+                    event.target.querySelector('audio').play();
+                });
+            });
+        }, 100); // Spaghetti-kod; hoppas att elementen laddat in efter 0.1 sekund.
+    </script>
+</body>
+</html>
