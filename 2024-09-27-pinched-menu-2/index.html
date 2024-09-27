@@ -20,7 +20,6 @@
             font-style: normal;
         }
 
-
         :root {
             --c-prim: rgb(27, 29, 43);
             --c-prim-light: rgb(34, 42, 70);
@@ -72,24 +71,27 @@
         #window > .top {
             display: flex;
             width: 100%;
-            height: 30%;
+            height: 50%;
             gap: 10px;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
-        #window > .bottom {
-            display: flex;
+        #window.running > .bottom {
+            display: grid;
             width: 100%;
-            height: 70%;
-            gap: 30px;
+            height: 50%;
+            gap: 15px;
+            padding: 0 15px 15px 15px;
+            grid-template-columns: 1fr 1fr;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            box-sizing: border-box;
         }
-        .btn {
-            height: 60px;
-            width: 220px;
+        #window.running > .bottom > .btn {
+            height: 100%;
+            width: 100%;
             border: 1px solid var(--c-sec);
             background-color: var(--c-prim-dark);
             border-radius: 6px;
@@ -100,7 +102,7 @@
             /* transition: all ease 0.2s; */
             cursor: pointer;
         }
-        .btn:active { /* Vid klick */
+        #window.running > .bottom > .btn:active { /* Vid klick */
             background-color: var(--c-prim);
             color: var(--c-sec-dark);
             border-color: var(--c-sec-dark);
@@ -134,28 +136,107 @@
                 justify-content: center;
                 align-items: center;
             }
-
+        }
+        .piano-wrap {
+            --w2: calc(var(--w)*0.11);
+            position: relative;
+            display: flex;
+            width: max-content;
+            height: max-content;
+            column-gap: calc(var(--w2)*0.075);
+        }
+        .piano-wrap > .octave {
+            width: max-content;
+            height: max-content;
+            position: relative;
+        }
+        .piano-wrap .white-keys {
+            display: flex;
+            column-gap: calc(var(--w2)*0.075);
+        } 
+        .piano-wrap .black-keys {
+            display: flex;
+            column-gap: calc(var(--w2)*0.475);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .piano-wrap .key {
+            box-sizing: border-box;
+            border-radius: 0 0 calc(var(--w2)*0.2) calc(var(--w2)*0.2);
+            transition: all ease 0.1s;
+        }
+        .piano-wrap .white-keys .key {
+            width: var(--w2);
+            height: calc(var(--w2)*4);
+            background-color: var(--c-prim);
+            border: 1px solid var(--c-sec);
+        }
+        .piano-wrap .black-keys .key {
+            width: calc(var(--w2)*0.6);
+            height: calc(var(--w2)*2.75);
+            background-color: var(--c-prim-dark);
+            border: 1px solid var(--c-sec-dark);
+        }
+        .piano-wrap .black-keys .key:first-child {
+            margin-left: calc( var(--w2) * ((1 - 0.3) + (0.075 * 0.5)) );
+        }
+        .piano-wrap .black-keys .key[note="fs"], .piano-wrap .black-keys .key[note="cs"]:not(:first-child) {
+            margin-left: calc(var(--w2)*1.075);
+        }
+        .piano-wrap.hoverable .white-keys .key:hover,
+        .piano-wrap .white-keys .key.marked {
+            background-color: var(--c-sec);
+            border-color: var(--c-sec);
+        }
+        .piano-wrap.hoverable .black-keys .key:hover,
+        .piano-wrap .black-keys .key.marked {
+            background-color: var(--c-sec-dark);
+            border-color: var(--c-sec-dark);
         }
     </style>
 </head>
 <body>
-    <div id="window">
+    <div id="window" class="running">
         <div class="top">
-            <h1>MU<span style="color: var(--c-sec-dark);">Q</span>UIZ</h1>
-            <h3>~ Piano ~</h3>
+            <div class="piano-wrap" octaves="4-4" mark="e,g,cs"></div>
         </div>
         <div class="bottom">
-            <button class="btn">Everything</button>
-            <button class="btn">Notes</button>
-            <button class="btn">Chords</button>
-            <button class="btn">Scales</button>
+            <button class="btn" style="grid-column: span 2;">A</button>
+            <button class="btn">B</button>
+            <button class="btn">C</button>
+            <button class="btn">D</button>
+            <button class="btn">E</button>
+            <button class="btn">F</button>
+            <button class="btn">G</button>
         </div>
     </div>
     <div id="blocked">
         <h1>The window is too small.</h1>
     </div>
     <script>
-        
+        const whiteKeys = ["c", "d", "e", "f", "g", "a", "b"];
+        const blackKeys = ["cs", "ds", "fs", "gs", "as"];
+
+        document.querySelectorAll('.piano-wrap').forEach((wrapElem) => {
+            const octLims = wrapElem.getAttribute('octaves').split('-').map((num) => parseInt(num));
+            const marked = wrapElem.getAttribute('mark').split(',');
+            let html = "";
+            for(let octave = octLims[0]; octave <= octLims[1]; octave++) {
+                html += `<div class="octave" octave="c${octave}">`;
+                html += `<div class="white-keys">`;
+                whiteKeys.forEach((key) => {
+                    html += `<div class="key${marked.includes(key) ? " marked" : ""}" note="${key}"></div>`;
+                });
+                html += `</div>`;
+                html += `<div class="black-keys">`;
+                blackKeys.forEach((key) => {
+                    html += `<div class="key${marked.includes(key) ? " marked" : ""}" note="${key}"></div>`;
+                });
+                html += `</div></div>`;
+            }
+            wrapElem.innerHTML = html;
+        });
     </script>
 </body>
 </html>
