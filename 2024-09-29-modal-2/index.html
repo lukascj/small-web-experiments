@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal using dialog-elem</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap');
+        .gowun-batang-regular {
+            font-family: "Gowun Batang", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+        .gowun-batang-bold {
+            font-family: "Gowun Batang", serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+    </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            --c1: rgb(230, 220, 210);
+            --c2: rgb(220, 200, 180);
+            --c3: rgb(185, 140, 120);
+            --c4: rgb(145, 90, 80);
+            background-color: var(--c1);
+        }
+        .btn {
+            height: 40px;
+            width: 100px;
+            border: 2px solid var(--c3);
+            background: var(--c1);
+            font: 18px "Gowun Batang", serif;
+            font-weight: 700;
+            color: var(--c3);
+            cursor: pointer;
+            transition: all ease 0.3s;
+            text-transform: uppercase;
+        }
+        .btn:hover {
+            color: var(--c4);
+            border-color: var(--c4);
+            background-color: var(--c2);
+        }
+        body > .btn {
+            margin: 30px;
+        }
+        dialog#d::backdrop {
+            backdrop-filter: blur(1px);
+        }
+        @keyframes pulse {
+            5% { color: var(--c3); }
+            45% { color: var(--c4); }
+            55% { color: var(--c4); }
+            95% { color: var(--c3); }
+        }
+        dialog#d {
+            opacity: 0;
+            scale: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: all 0.4s;
+            top: 200px;
+            left: 200px;
+            background-color: var(--c2);
+            border: 2px solid var(--c3);
+            color: var(--c3);
+            padding: 30px;
+            gap: 10px;
+            animation: 1s ease-in-out infinite pulse;
+        }
+        dialog#d[open] {
+            opacity: 1;
+            scale: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <dialog id="d">
+        <p>Tjena!</p>
+        <button class="btn" onclick="d.close()">Close</button>
+    </dialog>
+    <button class="btn" onclick="d.showModal()">Open</button>
+</body>
+</html>
