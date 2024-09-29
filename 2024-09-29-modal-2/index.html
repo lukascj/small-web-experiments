@@ -51,6 +51,7 @@
         }
         dialog#d::backdrop {
             backdrop-filter: blur(1px);
+            background-color: rgba(185, 140, 120, 0.3);
         }
         @keyframes pulse {
             5% { color: var(--c3); }
@@ -68,12 +69,14 @@
             transition: all 0.4s;
             top: 200px;
             left: 200px;
-            background-color: var(--c2);
+            background-color: var(--c1);
             border: 2px solid var(--c3);
             color: var(--c3);
             padding: 30px;
             gap: 10px;
             animation: 1s ease-in-out infinite pulse;
+            font: 18px "Gowun Batang", serif;
+            font-weight: 700;
         }
         dialog#d[open] {
             opacity: 1;
@@ -83,7 +86,7 @@
 </head>
 <body>
     <dialog id="d">
-        <p>Tjena!</p>
+        <p>TJENA!</p>
         <button class="btn" onclick="d.close()">Close</button>
     </dialog>
     <button class="btn" onclick="d.showModal()">Open</button>
