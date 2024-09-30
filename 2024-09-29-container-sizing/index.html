@@ -44,13 +44,17 @@
         body > .left > .top > button {
             width: 80px;
             height: 30px;
-            background-color: rgb(25, 20, 50);
             border: none;
             border-radius: 2px;
             color: rgb(180, 180, 220);
             font: 12px "Poppins", sans-serif;
             text-transform: uppercase;
             font-weight: 900;
+
+            background-color: rgb(25, 20, 50);
+        }
+        body > .left > .top > button:hover {
+            background-color: rgb(40, 35, 80);
         }
         body > .left > .top > button:nth-child(1) {
             background-color: color-mix(in srgb, rgb(150, 140, 190) 60%, rgb(25, 20, 50));
@@ -61,8 +65,14 @@
         body > .left > .top > button:nth-child(3) {
             background-color: color-mix(in srgb, rgb(150, 140, 190) 20%, rgb(25, 20, 50));
         }
-        body > .left > button:hover {
-            background-color: rgb(40, 35, 80);
+        body > .left > .top > button:nth-child(1):hover {
+            background-color: color-mix(in srgb, rgb(150, 140, 190) 60%, rgb(40, 35, 80));
+        }
+        body > .left > .top > button:nth-child(2):hover {
+            background-color: color-mix(in srgb, rgb(150, 140, 190) 40%, rgb(40, 35, 80));
+        }
+        body > .left > .top > button:nth-child(3):hover {
+            background-color: color-mix(in srgb, rgb(150, 140, 190) 20%, rgb(40, 35, 80));
         }
         body > .right {
             flex-grow: 1;
