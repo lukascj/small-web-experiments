@@ -10,47 +10,24 @@
             height: 200vh;
             display: flex;
             justify-content: center;
-        }
-        #c {
-            position: relative;
-            margin-top: calc(50vh - 50px);
 
-            scroll-timeline: --cTimeline y; 
-            /* Firefox stödjer den äldre "vertical" syntaxen. */
-            scroll-timeline: --cTimeline vertical; 
-            /* Experimentellt. 
+            /* Experimentella properties. 
             Fungerar inte till fullo med Firefox eller Safari. */
+            scroll-timeline: --cTimeline y; 
+            /* Firefox stödjer bara den äldre "vertical" syntaxen. */
+            scroll-timeline: --cTimeline vertical; 
         }
         @keyframes cAnimation {
-            from {
-                translate: 
-                    calc(cos(0deg) * 100px)
-                    calc(sin(0deg) * 100px);
-            }
-            to {
-                translate: 
-                    calc(cos(359.99deg) * 100px)
-                    calc(sin(359.99deg) * 100px);
-            }
+            from { rotate: 0deg; }
+            to { rotate: 359.99deg; }
         }
-        #c > .center {
+        #square {
+            position: relative;
+            margin-top: calc(50vh - 50px);
             background-color: black;
             height: 50px;
             width: 50px;
-            border-radius: 50%;
-        }
-        #c > .orbit {
-            --angle: 0deg;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: blue;
-            height: 50px;
-            width: 50px;
-            border-radius: 50%;
-            /* translate: 
-                calc(cos(var(--angle)) * 100px)
-                calc(sin(var(--angle)) * 100px); */
+
             animation-name: cAnimation;
             animation-duration: 1ms; /* Firefox kräver detta för att applicera animationen. */
             animation-timeline: --cTimeline;
@@ -58,9 +35,6 @@
     </style>
 </head>
 <body>
-    <div id="c">
-        <div class="center"></div>
-        <div class="orbit"></div>
-    </div>
+    <div id="square"></div>
 </body>
 </html>
