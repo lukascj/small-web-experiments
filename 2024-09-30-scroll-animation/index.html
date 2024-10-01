@@ -7,9 +7,23 @@
     <style>
         body {
             background-color: grey;
-            height: 200vh;
             display: flex;
             justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            padding: 10vh;
+            box-sizing: border-box;
+        }
+        #wrap {
+            height: 100%;
+            width: 100%;
+            overflow-y: scroll;
+            background-color: rgb(150, 150, 150);
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            position: relative;
 
             /* Experimentella properties. 
             Fungerar inte till fullo med Firefox eller Safari. */
@@ -17,17 +31,24 @@
             /* Firefox stödjer bara den äldre "vertical" syntaxen. */
             scroll-timeline: --cTimeline vertical; 
         }
+        #stretcher {
+            height: 200vh;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
         @keyframes cAnimation {
-            from { rotate: 0deg; }
-            to { rotate: 359.99deg; }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(359.99deg); }
         }
         #square {
             position: relative;
-            margin-top: calc(50vh - 50px);
+            margin-top: 30vh;
             background-color: black;
             height: 50px;
             width: 50px;
-
+            
             animation-name: cAnimation;
             animation-duration: 1ms; /* Firefox kräver detta för att applicera animationen. */
             animation-timeline: --cTimeline;
@@ -35,6 +56,9 @@
     </style>
 </head>
 <body>
-    <div id="square"></div>
+    <div id="wrap">
+        <div id="square"></div>
+        <div id="stretcher"></div>
+    </div>
 </body>
 </html>
