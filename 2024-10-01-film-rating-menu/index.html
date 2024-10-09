@@ -82,13 +82,14 @@
             width: 40px !important;
             overflow: visible;
             cursor: pointer;
+            text-align: center;
         }
         #panel > .row.actions > .action-wrap:hover { 
             color: var(--c1-light-2) }
         #panel > .row.actions > .action-wrap:hover > .action { 
             background-color: var(--c1-light-2) }
         #panel > .row.actions > .action-wrap > .action {
-            background-color: var(--c1-light);
+            background-color: var(--c1-dark);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -106,7 +107,6 @@
             row-gap: 6px;
         }
         #panel > .row.rate.ready:hover {
-            color: var(--c1-light-2);
             text-decoration: underline;
             cursor: pointer;
         }
@@ -114,25 +114,36 @@
             display: flex; 
             transform: translateX(-7.5px);
         }
-        #panel > .row.rate > .stars > .half-star {
+        #panel > .row.rate > .stars > .whole-star {
+            height: 30px;
+            width: 30px;
+            background-color: var(--c1-dark);
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            border: 1px solid var(--c1-dark);
+            box-sizing: border-box;
+        }
+        #panel > .row.rate > .stars > .whole-star > .half-star {
+            height: 100%;
+            width: 50%;
+        }
+        #panel > .row.rate > .stars > .zero {
             height: 30px;
             width: 15px;
-            background-color: var(--c1-dark);
+            /* background-color: transparent; */
         }
-        #panel > .row.rate > .stars > .half-star.zero {
-            background-color: transparent;
-        }
-        #panel > .row.rate.open > .stars > .half-star {
+        #panel > .row.rate.open > .stars > .whole-star,
+        #panel > .row.rate.open > .stars > .zero {
             cursor: pointer; }
-        #panel > .row.rate > .stars > .half-star.r:not([num="5"]) { 
+        #panel > .row.rate > .stars > .whole-star:not([num="5"]) { 
             margin-right: 10px; }
-        #panel > .row.rate.open > .stars:not(:hover) > .half-star:not(.zero).active,
-        #panel > .row.rate:not(.open) > .stars > .half-star:not(.zero).active {
+        #panel > .row.rate:not(.open) > .stars > .whole-star > .half-star.active,
+        #panel > .row.rate:not(.open) > .stars > .whole-star.active {
             background-color: var(--c2); }
-        #panel > .row.rate.open > .stars > .half-star:not(.zero).hover-active {
-            background-color: var(--c1-light); }
-        #panel > .row.rate > .stars + span {
-            position: absolute; }
+        #panel > .row.rate.open > .stars > .whole-star > .half-star.hover-active,
+        #panel > .row.rate.open > .stars > .whole-star.hover-active {
+            background-color: var(--c1-light-2); }
     </style>
 </head>
 <body>
@@ -156,19 +167,29 @@
             <div class="row rate ready">
                 <p><span>Rate</span><span></span></p>
                 <div class="stars">
-                    <div class="half-star zero" num="0.0"></div>
-                    <div class="half-star l" num="0.5"></div>
-                    <div class="half-star r" num="1"></div>
-                    <div class="half-star l" num="1.5"></div>
-                    <div class="half-star r" num="2"></div>
-                    <div class="half-star l" num="2.5"></div>
-                    <div class="half-star r" num="3"></div>
-                    <div class="half-star l" num="3.5"></div>
-                    <div class="half-star r" num="4"></div>
-                    <div class="half-star l" num="4.5"></div>
-                    <div class="half-star r" num="5"></div>
+                    <div class="zero" num="0.0"></div>
+                    <div class="whole-star" num="1">
+                        <div class="half-star l" num="0.5"></div>
+                        <div class="half-star r" num="1"></div>
+                    </div>
+                    <div class="whole-star" num="2">
+                        <div class="half-star l" num="1.5"></div>
+                        <div class="half-star r" num="2"></div>
+                    </div>
+                    <div class="whole-star" num="3">
+                        <div class="half-star l" num="2.5"></div>
+                        <div class="half-star r" num="3"></div>
+                    </div>
+                    <div class="whole-star" num="4">
+                        <div class="half-star l" num="3.5"></div>
+                        <div class="half-star r" num="4"></div>
+                        
+                    </div>
+                    <div class="whole-star" num="5">
+                        <div class="half-star l" num="4.5"></div>
+                        <div class="half-star r" num="5"></div>
+                    </div>
                 </div>
-                <span></span>
             </div>
             <div class="row your-activity">Your activity</div>
             <div class="row create">Create</div>
@@ -184,6 +205,7 @@
         let watchlisted = false;
 
         let isRating = false;
+        let num = null;
         let rating = null;
         let cooldown = 0, cooldownTimer;
         const cooldownLen = 3;
@@ -204,37 +226,38 @@
         });
         starWrapElem.addEventListener("mouseover", e => {
             if(isRating && rateRow.classList.contains("open")) {
-                let num;
                 const elem = e.target;
-                if(elem.classList.contains("half-star")) {
+
+                if(elem.classList.contains("half-star") || elem.classList.contains("zero")) {
                     num = parseFloat(elem.getAttribute("num"));
-                    starWrapElem.querySelectorAll(".half-star").forEach((halfStar) => {
-                        if(parseFloat(halfStar.getAttribute("num")) <= num) {
-                            halfStar.classList.add("hover-active");
+                    starWrapElem.querySelectorAll(".whole-star, zero").forEach((starElem) => {
+                        if(parseFloat(starElem.getAttribute("num")) <= Math.floor(num)) {
+                            starElem.classList.add("hover-active");
                         } else {
-                            halfStar.classList.remove("hover-active");
+                            starElem.classList.remove("hover-active");
+                            starElem.querySelector(".half-star.l").classList.remove("hover-active")
                         }
+                        if(num-0.5 == Math.floor(num)) starWrapElem.querySelector(`.half-star.l[num="${num}"]`).classList.add("hover-active");
                     });
                 }
+
                 if(spans[0].textContent != "Choose your rating. Rate ") spans[0].textContent = "Choose your rating. Rate ";
                 if(typeof num === 'number') spans[1].textContent = `${num}?`;
             }
         });
         starWrapElem.addEventListener("click", e => {
             if(isRating && rateRow.classList.contains("open")) {
-                let num;
                 const elem = e.target;
 
-                if(elem.classList.contains("half-star")) {
-                    num = parseFloat(elem.getAttribute("num"));
-                    starWrapElem.querySelectorAll(".half-star").forEach((halfStar) => {
-                        if(parseFloat(halfStar.getAttribute("num")) <= num) {
-                            halfStar.classList.add("active");
-                        } else {
-                            halfStar.classList.remove("active");
-                        }
-                    })
-                }
+                starWrapElem.querySelectorAll(".whole-star, .zero").forEach((starElem) => {
+                    if(parseFloat(starElem.getAttribute("num")) <= Math.floor(num)) {
+                        starElem.classList.add("active");
+                    } else {
+                        starElem.classList.remove("active");
+                        starElem.querySelector(".half-star.l").classList.remove("active")
+                    }
+                    if(num-0.5 == Math.floor(num)) starWrapElem.querySelector(`.half-star.l[num="${num}"]`).classList.add("active");
+                });
 
                 cooldown = cooldownLen;
                 cooldownTimer = setInterval(() => {
@@ -246,19 +269,20 @@
                 }, 500);
 
                 rateRow.classList.remove("open");
-                e.currentTarget.querySelectorAll(":scope > .half-star").forEach(elem => {
+                e.currentTarget.querySelectorAll(":scope .whole-star, :scope .half-star").forEach(elem => {
                     elem.classList.remove("hover-active");
                 });
 
                 isRating = false;
                 rating = num;
+
                 spans[0].textContent = "Rated ";
                 if(spans[1] != toString(rating)) spans[1].textContent = rating;
             }
         });
         starWrapElem.addEventListener("mouseleave", e => {
             if(isRating && rateRow.classList.contains("open")) {
-                e.currentTarget.querySelectorAll(":scope > .half-star").forEach(elem => {
+                e.currentTarget.querySelectorAll(":scope .whole-star, :scope .half-star").forEach(elem => {
                     elem.classList.remove("hover-active");
                 });
                 if(spans[0].textContent != "Choose your rating") spans[0].textContent = "Choose your rating";
@@ -284,17 +308,22 @@
 
         actionRow.addEventListener("click", (e) => {
             let elem = e.target;
-            console.log(elem.classList.contains("action-wrap"));
             while(!elem.classList.contains("action-wrap")) {
                 elem = elem.parentElement;
-                console.log(elem);
                 if(elem.id == "panel") return; // Gått för långt upp i DOM:en.
             }
 
+            const labelElem = elem.querySelector(".action + p");
             if(elem.classList.contains("active")) {
                 elem.classList.remove("active");
+                if(elem.classList.contains("watch")) labelElem.textContent = "Watch";
+                else if(elem.classList.contains("like")) labelElem.textContent = "Like";
+                else if(elem.classList.contains("watchlist")) labelElem.textContent = "Watchlist";
             } else {
                 elem.classList.add("active");
+                if(elem.classList.contains("watch")) labelElem.textContent = "Watched";
+                else if(elem.classList.contains("like")) labelElem.textContent = "Liked";
+                else if(elem.classList.contains("watchlist")) labelElem.textContent = "Watch-listed";
             }
         });
     </script>
