@@ -26,7 +26,10 @@
             --c1-light-2: color-mix(in srgb, var(--c1-light) 70%, white);
             --c1-dark: rgb(50, 50, 60);
             --c1-medium-dark: color-mix(in srgb, var(--c1-dark) 30%, var(--c1));
-            
+            --c2: rgb(165, 55, 80);
+            --c2-dark: rgb(120, 40, 70);
+            --c2-medium-dark: color-mix(in srgb, var(--c2) 40%, var(--c2-dark));;
+
             background-color: var(--c);
             font-family: 'Outfit', sans-serif;
         }
@@ -51,17 +54,20 @@
             justify-content: center;
             padding: 10px;
             color: var(--c1-light);
-            cursor: pointer;
         }
         #panel > .row:not(:last-child) {
-            border-bottom: 1px solid var(--c1-dark);
-        }
+            border-bottom: 1px solid var(--c1-dark); }
+        #panel > .row:hover {
+            background-color: var(--c1-medium-dark); }
         #panel > .row.your-activity:hover, 
         #panel > .row.create:hover, 
-        #panel > .row.change-media:hover {
-            background-color: var(--c1-medium-dark);
+        #panel > .row.change-media:hover,
+        #panel > .row.rate:not(.open):hover {
             color: var(--c1-light-2);
+            cursor: pointer;
         }
+        #panel > .row.rate.open:hover {
+            color: var(--c1-light-2); }
         #panel > .row.actions {
             justify-content: space-between;
             padding-top: 16px;
@@ -75,41 +81,58 @@
             row-gap: 6px;
             width: 40px !important;
             overflow: visible;
+            cursor: pointer;
         }
-        #panel > .row.actions > .action-wrap:hover { color: var(--c1-light-2) }
-        #panel > .row.actions > .action-wrap:hover > .action { background-color: var(--c1-light-2) }
+        #panel > .row.actions > .action-wrap:hover { 
+            color: var(--c1-light-2) }
+        #panel > .row.actions > .action-wrap:hover > .action { 
+            background-color: var(--c1-light-2) }
         #panel > .row.actions > .action-wrap > .action {
             background-color: var(--c1-light);
             width: 40px;
             height: 40px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            border: 1px solid var(--c1-dark);
         }
+        #panel > .row.actions > .action-wrap.active > .action {
+            background-color: var(--c2) }
+        #panel > .row.actions > .action-wrap.active:hover > .action {
+            background-color: var(--c2-medium-dark) }
         #panel > .row.rate {
             display: flex;
             flex-direction: column;
             align-items: center;
             row-gap: 6px;
         }
-        #panel > .row.rate > p:hover {
+        #panel > .row.rate.ready:hover {
             color: var(--c1-light-2);
             text-decoration: underline;
+            cursor: pointer;
         }
         #panel > .row.rate > .stars {
-            display: flex;
+            display: flex; 
+            transform: translateX(-7.5px);
         }
         #panel > .row.rate > .stars > .half-star {
             height: 30px;
             width: 15px;
             background-color: var(--c1-dark);
         }
-        #panel > .row.rate > .stars > .half-star.active {
-            background-color: var(--c1-light);
+        #panel > .row.rate > .stars > .half-star.zero {
+            background-color: transparent;
         }
-        #panel > .row.rate > .stars > .half-star.r:not([num="5"]) {
-            margin-right: 10px;
-        }
+        #panel > .row.rate.open > .stars > .half-star {
+            cursor: pointer; }
+        #panel > .row.rate > .stars > .half-star.r:not([num="5"]) { 
+            margin-right: 10px; }
+        #panel > .row.rate.open > .stars:not(:hover) > .half-star:not(.zero).active,
+        #panel > .row.rate:not(.open) > .stars > .half-star:not(.zero).active {
+            background-color: var(--c2); }
+        #panel > .row.rate.open > .stars > .half-star:not(.zero).hover-active {
+            background-color: var(--c1-light); }
         #panel > .row.rate > .stars + span {
-            position: absolute;
-        }
+            position: absolute; }
     </style>
 </head>
 <body>
@@ -130,9 +153,10 @@
                     <p>Watchlist</p>
                 </div>
             </div>
-            <div class="row rate">
+            <div class="row rate ready">
                 <p><span>Rate</span><span></span></p>
                 <div class="stars">
+                    <div class="half-star zero" num="0.0"></div>
                     <div class="half-star l" num="0.5"></div>
                     <div class="half-star r" num="1"></div>
                     <div class="half-star l" num="1.5"></div>
@@ -155,27 +179,122 @@
         </div>
     </div>
     <script>
+        let liked = false;
+        let watched = false;
+        let watchlisted = false;
+
         let isRating = false;
+        let rating = null;
+        let cooldown = 0, cooldownTimer;
+        const cooldownLen = 3;
 
-        const openRateElem = document.querySelector(".row.rate > p");
-        openRateElem.addEventListener("click", () => {
-            if(!isRating) return;
+        const rateRow = document.querySelector(".row.rate");
+        const openRateElem = rateRow.querySelector(":scope > p");
+        const spans = openRateElem.querySelectorAll("span");
+        const starWrapElem = rateRow.querySelector(":scope > .stars");
+        
+        rateRow.addEventListener("click", () => {
+            if(!isRating && rateRow.classList.contains("ready")) {
+                rateRow.classList.remove("ready");
+                isRating = true;
+                rateRow.classList.add("open");
+                spans[0].textContent = "Choose your rating"
+                spans[1].textContent = "";
+            }
+        });
+        starWrapElem.addEventListener("mouseover", e => {
+            if(isRating && rateRow.classList.contains("open")) {
+                let num;
+                const elem = e.target;
+                if(elem.classList.contains("half-star")) {
+                    num = parseFloat(elem.getAttribute("num"));
+                    starWrapElem.querySelectorAll(".half-star").forEach((halfStar) => {
+                        if(parseFloat(halfStar.getAttribute("num")) <= num) {
+                            halfStar.classList.add("hover-active");
+                        } else {
+                            halfStar.classList.remove("hover-active");
+                        }
+                    });
+                }
+                if(spans[0].textContent != "Choose your rating. Rate ") spans[0].textContent = "Choose your rating. Rate ";
+                if(typeof num === 'number') spans[1].textContent = `${num}?`;
+            }
+        });
+        starWrapElem.addEventListener("click", e => {
+            if(isRating && rateRow.classList.contains("open")) {
+                let num;
+                const elem = e.target;
 
+                if(elem.classList.contains("half-star")) {
+                    num = parseFloat(elem.getAttribute("num"));
+                    starWrapElem.querySelectorAll(".half-star").forEach((halfStar) => {
+                        if(parseFloat(halfStar.getAttribute("num")) <= num) {
+                            halfStar.classList.add("active");
+                        } else {
+                            halfStar.classList.remove("active");
+                        }
+                    })
+                }
 
+                cooldown = cooldownLen;
+                cooldownTimer = setInterval(() => {
+                    if(cooldown - 0.5 <= 0) {
+                        cooldown = 0;
+                        rateRow.classList.add("ready");
+                        clearInterval(cooldownTimer);
+                    } else { cooldown -= 0.5 }
+                }, 500);
+
+                rateRow.classList.remove("open");
+                e.currentTarget.querySelectorAll(":scope > .half-star").forEach(elem => {
+                    elem.classList.remove("hover-active");
+                });
+
+                isRating = false;
+                rating = num;
+                spans[0].textContent = "Rated ";
+                if(spans[1] != toString(rating)) spans[1].textContent = rating;
+            }
+        });
+        starWrapElem.addEventListener("mouseleave", e => {
+            if(isRating && rateRow.classList.contains("open")) {
+                e.currentTarget.querySelectorAll(":scope > .half-star").forEach(elem => {
+                    elem.classList.remove("hover-active");
+                });
+                if(spans[0].textContent != "Choose your rating") spans[0].textContent = "Choose your rating";
+                spans[1].textContent = "";
+            }
+        });
+        rateRow.addEventListener("mouseleave", e => {
+            if(isRating) {
+                rateRow.classList.remove("open");
+                rateRow.classList.add("ready");
+                isRating = false;
+                if(typeof rating == 'number') {
+                    spans[0].textContent = "Rated ";
+                    spans[1].textContent = rating;
+                } else {
+                    spans[0].textContent = "Rate";
+                    spans[1].textContent = "";
+                }
+            }
         });
 
-        const starWrapElem = document.querySelector(".row.rate > .stars");
-        starWrapElem.addEventListener("mouseover", (e) => {
-            const elem = e.target;
-            if(elem.classList.contains("half-star")) {
-                const num = parseFloat(elem.getAttribute("num"));
-                starWrapElem.querySelectorAll(".half-star").forEach((halfStar) => {
-                    if(parseFloat(halfStar.getAttribute("num")) <= num) {
-                        halfStar.classList.add("active");
-                    } else {
-                        halfStar.classList.remove("active");
-                    }
-                })
+        const actionRow = document.querySelector("#panel .row.actions");
+
+        actionRow.addEventListener("click", (e) => {
+            let elem = e.target;
+            console.log(elem.classList.contains("action-wrap"));
+            while(!elem.classList.contains("action-wrap")) {
+                elem = elem.parentElement;
+                console.log(elem);
+                if(elem.id == "panel") return; // Gått för långt upp i DOM:en.
+            }
+
+            if(elem.classList.contains("active")) {
+                elem.classList.remove("active");
+            } else {
+                elem.classList.add("active");
             }
         });
     </script>
