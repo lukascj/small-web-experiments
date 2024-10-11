@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imgur Fetch</title>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        #grid {
+            display: grid;
+        }
+    </style>
+</head>
+<body>
+    <div id="grid">
+        
+    </div>
+    <script>
+        
+        const albumHash = "Vk5z1XJ";
+
+        const imgurURL = {
+            "host": "https://api.imgur.com/3/",
+            "endpoints": [
+                "album/albumHash/images"
+            ]
+        }
+
+        function fetchAlbum(keyData) {
+            const headers = new Headers();
+            /* headers.append("Access-Control-Allow-Origin", "*");
+            headers.append("Access-Control-Allow-Methods", "GET, POST");
+            headers.append("Access-Control-Allow-Headers", "Content-Type");
+            headers.append("Content-Type", "application/json"); */
+            headers.append("Authorization", `Client-ID ${keyData["client_id"]}`);
+
+            const options = {
+                method: "GET",
+                headers: headers
+            }
+
+            const host = imgurURL["host"];
+            const endpoint = imgurURL["endpoints"][0].replace("albumHash", albumHash);
+            result = fetch(`${host}${endpoint}`, options)
+                .then((response) => {
+                    if(!response.ok) throw new Error("Faulty response.");
+                    return response.json();
+                }).then((data) => {
+                    drawGrid(data.data);
+                });
+        }
+        
+        function drawGrid(albumData) {
+            const gridElem = document.getElementById("grid");
+            for(album of albumData) {
+                const imageElem = document.createElement("img");
+                imageElem.crossorigin = "anonymous";
+                imageElem.src = album.link;
+                const imageWrapElem = document.createElement("div");
+                imageWrapElem.classList.add("img-wrap");
+                imageWrapElem.appendChild(imageElem);
+                gridElem.appendChild(imageWrapElem);
+            }
+        }
+        
+        fetch("keys.json")
+            .then((response) => {
+                if(!response.ok) throw new Error("Faulty response.");
+                return response.json();
+            }).then((data) => {
+                fetchAlbum(data.imgur);
+            }).catch((error) => {
+                console.error("Fetch error:", error);
+            });
+
+
+
+    </script>
+</body>
+</html>

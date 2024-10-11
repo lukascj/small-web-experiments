@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMDB Fetch</title>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        #grid {
+            display: grid;
+        }
+    </style>
+</head>
+<body>
+    <div id="grid">
+        
+    </div>
+    <script>
+        
+        const movieId = "11";
+
+        const imgurURL = {
+            "host": "https://api.themoviedb.org/3/",
+            "endpoints": [
+                "movie/:id"
+            ]
+        }
+
+        function fetchAlbum(keyData) {
+            const headers = new Headers();
+            /* headers.append("Access-Control-Allow-Origin", "*");
+            headers.append("Access-Control-Allow-Methods", "GET, POST");
+            headers.append("Access-Control-Allow-Headers", "Content-Type");
+            headers.append("Content-Type", "application/json"); */
+            headers.append("Authorization", `Bearer ${keyData["token"]}`);
+
+            const options = {
+                method: "GET",
+                // headers: headers
+            }
+
+            const host = imgurURL["host"];
+            const endpoint = imgurURL["endpoints"][0].replace(":id", movieId);
+            result = fetch(`${host}${endpoint}?api_key=${keyData["token"]}`, options)
+                .then((response) => {
+                    if(!response.ok) throw new Error("Faulty response.");
+                    return response.json();
+                }).then((data) => {
+                    drawGrid(data);
+                });
+        }
+        
+        function drawGrid(filmData) {
+            console.log(filmData);
+            /* const gridElem = document.getElementById("grid");
+            for(album of albumData) {
+                const imageElem = document.createElement("img");
+                imageElem.crossorigin = "anonymous";
+                imageElem.src = album.link;
+                const imageWrapElem = document.createElement("div");
+                imageWrapElem.classList.add("img-wrap");
+                imageWrapElem.appendChild(imageElem);
+                gridElem.appendChild(imageWrapElem);
+            } */
+        }
+        
+        fetch("keys.json")
+            .then((response) => {
+                if(!response.ok) throw new Error("Faulty response.");
+                return response.json();
+            }).then((data) => {
+                fetchAlbum(data.tmdb);
+            }).catch((error) => {
+                console.error("Fetch error:", error);
+            });
+
+
+
+    </script>
+</body>
+</html>

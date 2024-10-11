@@ -131,3 +131,6 @@ dist
 
 # Model textures
 textures/
+
+# Secret keys
+keys.json
