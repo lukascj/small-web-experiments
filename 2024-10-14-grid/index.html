@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Testing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            --c1: black;
+            --c2: white;
+            --c3: rgb(255, 208, 52);
+
+            background-color: var(--c1);
+            padding: 3vw;
+            overflow-x: hidden;
+        }
+
+        .grid.one {
+            width: 100%;
+            display: grid;
+            grid-template-rows: repeat(3, 150px);
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .img-wrap {
+            background-color: rgb(30, 29, 34);
+        }
+
+        .img-wrap > img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="grid one"></div>
+    <div class="grid two" hidden></div>
+    <div class="grid three" hidden></div>
+
+    <script>
+        const imageList = ["1.jpg", "2.jpg", "3.jpg", "4.png", "5.png"];
+        const gridElemList = document.querySelectorAll(".grid");
+
+        gridElemList.forEach(gridElem => {
+            imageList.forEach(imageName => {
+                const imageElem = document.createElement("img");
+                imageElem.src = `img/${imageName}`;
+                const imageWrapElem = document.createElement("div");
+                imageWrapElem.classList.add("img-wrap");
+                imageWrapElem.appendChild(imageElem);
+                gridElem.appendChild(imageWrapElem);
+            });
+        });
+    </script>
+</body>
+</html>

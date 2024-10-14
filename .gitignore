@@ -134,3 +134,6 @@ textures/
 
 # Secret keys
 keys.json
+
+# Images
+img/
