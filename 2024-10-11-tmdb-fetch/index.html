@@ -15,17 +15,20 @@
     </style>
 </head>
 <body>
-    <div id="grid">
-        
+    <div id="wrap">
+
+        <div id="grid"></div>
     </div>
     <script>
         
         const movieId = "11";
+        const searchQuery = encodeURIComponent("Star Wars: Episode I - The Phantom Menace");
 
         const imgurURL = {
             "host": "https://api.themoviedb.org/3/",
             "endpoints": [
-                "movie/:id"
+                "movie/:id?",
+                "search/movie?query=:query&"
             ]
         }
 
@@ -43,8 +46,9 @@
             }
 
             const host = imgurURL["host"];
-            const endpoint = imgurURL["endpoints"][0].replace(":id", movieId);
-            result = fetch(`${host}${endpoint}?api_key=${keyData["token"]}`, options)
+            // const endpoint = imgurURL["endpoints"][0].replace(":id", movieId);
+            const endpoint = imgurURL["endpoints"][1].replace(":query", searchQuery);
+            result = fetch(`${host}${endpoint}api_key=${keyData["token"]}`, options)
                 .then((response) => {
                     if(!response.ok) throw new Error("Faulty response.");
                     return response.json();
@@ -72,7 +76,7 @@
                 if(!response.ok) throw new Error("Faulty response.");
                 return response.json();
             }).then((data) => {
-                fetchAlbum(data.tmdb);
+                fetchAlbum(data["tmdb"]);
             }).catch((error) => {
                 console.error("Fetch error:", error);
             });

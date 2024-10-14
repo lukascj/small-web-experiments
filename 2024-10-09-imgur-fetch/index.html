@@ -71,7 +71,7 @@
                 if(!response.ok) throw new Error("Faulty response.");
                 return response.json();
             }).then((data) => {
-                fetchAlbum(data.imgur);
+                fetchAlbum(data["imgur"]);
             }).catch((error) => {
                 console.error("Fetch error:", error);
             });
