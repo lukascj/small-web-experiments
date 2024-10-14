@@ -18,30 +18,68 @@
             padding: 3vw;
             overflow-x: hidden;
         }
+        
+        .pixelated {
+            image-rendering: pixelated;
+        }
+        
+        .grid {
+            margin-bottom: 6vw;
+        }
+        .grid > .img-wrap {
+            background-color: rgb(30, 29, 34);
+        }
 
         .grid.one {
             width: 100%;
             display: grid;
-            grid-template-rows: repeat(3, 150px);
+            grid-auto-rows: 300px;
             grid-template-columns: repeat(3, 1fr);
+            gap: 3vw;
         }
-
-        .img-wrap {
-            background-color: rgb(30, 29, 34);
-        }
-
-        .img-wrap > img {
+        .grid.one > .img-wrap > img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            image-rendering: optimizeQuality;
+        }
+
+        .grid.two {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3vw;
+        }
+        .grid.two > .img-wrap {
+            height: max-content;
+        }
+        .grid.two > .img-wrap > img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            image-rendering: optimizeQuality;
+        }
+
+        .grid.three {
+            width: 100%;
+            display: grid;
+            grid-auto-rows: 300px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3vw;
+        }
+        .grid.three > .img-wrap > img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            image-rendering: optimizeQuality;
         }
 
     </style>
 </head>
 <body>
     <div class="grid one"></div>
-    <div class="grid two" hidden></div>
-    <div class="grid three" hidden></div>
+    <div class="grid two"></div>
+    <div class="grid three"></div>
 
     <script>
         const imageList = ["1.jpg", "2.jpg", "3.jpg", "4.png", "5.png"];

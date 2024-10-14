@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Testing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            --c1: black;
+            --c2: white;
+            --c3: rgb(255, 208, 52);
+
+            background-color: var(--c1);
+            padding: 3vw;
+            overflow-x: hidden;
+        }
+        
+        .pixelated {
+            image-rendering: pixelated;
+        }
+        
+        .grid {
+            margin-bottom: 6vw;
+        }
+        .grid > .column > .img-wrap {
+            background-color: rgb(30, 29, 34);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .grid.one {
+            width: 100%;
+            display: flex;
+            gap: 3vw;
+        }
+        .grid.one > .column {
+            width: 33%;
+            display: flex;
+            flex-direction: column;
+            gap: 3vw;
+        }
+        .grid.one > .column > .img-wrap {
+            width: 100%;
+            height: max-content; 
+        }
+        .grid.one > .column > .img-wrap > img {
+            width: 100%;
+            height: 100%; /* Konstigt nog behövs denna... */
+            object-fit: cover;
+            image-rendering: optimizeQuality;
+        }
+
+        /* .grid.two {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3vw;
+        }
+        .grid.two > .img-wrap {
+            height: max-content;
+        }
+        .grid.two > .img-wrap > img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            image-rendering: optimizeQuality;
+        }
+
+        .grid.three {
+            width: 100%;
+            display: grid;
+            grid-auto-rows: 300px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3vw;
+        }
+        .grid.three > .img-wrap > img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            image-rendering: optimizeQuality;
+        } */
+
+    </style>
+</head>
+<body>
+    <div class="grid one"></div>
+    <!--<div class="grid two" hidden></div>
+    <div class="grid three" hidden></div>-->
+
+    <script>
+        const imageList = ["1.jpg", "2.jpg", "3.jpg", "4.png", "5.png"];
+        const gridElemList = document.querySelectorAll(".grid");
+
+        gridElemList.forEach((gridElem, i) => {
+            if(i != 0) {
+                imageList.forEach(imageName => {
+                    const imageElem = document.createElement("img");
+                    imageElem.src = `img/${imageName}`;
+                    const imageWrapElem = document.createElement("div");
+                    imageWrapElem.classList.add("img-wrap");
+                    imageWrapElem.appendChild(imageElem);
+                    gridElem.appendChild(imageWrapElem);
+                });
+            } else {
+                const columnElemList = [];
+                for(let j=0;j<3;j++) {
+                    const columnElem = document.createElement("div");
+                    columnElem.classList.add("column");
+                    columnElemList.push(columnElem);
+                }
+                imageList.forEach((imageName, j) => { 
+                    const imageElem = document.createElement("img");
+                    imageElem.src = `img/${imageName}`;
+                    const imageWrapElem = document.createElement("div");
+                    imageWrapElem.classList.add("img-wrap");
+                    imageWrapElem.appendChild(imageElem);
+                    columnElemIndex = j % 3;
+                    columnElemList[columnElemIndex].appendChild(imageWrapElem);
+                });
+                columnElemList.forEach(columnElem => {gridElem.appendChild(columnElem)});
+                
+            }
+            
+        });
+    </script>
+</body>
+</html>
